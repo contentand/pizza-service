@@ -2,6 +2,8 @@ package ua.rd.pizza;
 
 import ua.rd.pizza.domain.Customer;
 import ua.rd.pizza.domain.Order;
+import ua.rd.pizza.infrastructure.InitialContext;
+import ua.rd.pizza.service.OrderService;
 import ua.rd.pizza.service.SimpleOrderService;
 
 
@@ -10,7 +12,7 @@ public class AppRunner {
         Customer customer = null;
         Order order;
 
-        SimpleOrderService orderService = new SimpleOrderService();
+        OrderService orderService = InitialContext.getInstance("orderService");
         order = orderService.placeNewOrder(customer, 1, 2, 3);
 
         System.out.println(order);

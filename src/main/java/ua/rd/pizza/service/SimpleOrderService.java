@@ -3,7 +3,7 @@ package ua.rd.pizza.service;
 import ua.rd.pizza.domain.Customer;
 import ua.rd.pizza.domain.Order;
 import ua.rd.pizza.domain.Pizza;
-import ua.rd.pizza.repository.InMemoryOrderRepository;
+import ua.rd.pizza.infrastructure.InitialContext;
 import ua.rd.pizza.repository.OrderRepository;
 
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ public class SimpleOrderService implements OrderService {
     private PizzaService pizzaService;
 
     public SimpleOrderService() {
-        this.orderRepository = new InMemoryOrderRepository();
-        this.pizzaService = new SimplePizzaService();
+        this.orderRepository = InitialContext.getInstance("orderRepository");
+        this.pizzaService = InitialContext.getInstance("pizzaService");
     }
 
     public SimpleOrderService(OrderRepository orderRepository, PizzaService pizzaService) {
