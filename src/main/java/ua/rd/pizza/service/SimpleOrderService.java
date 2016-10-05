@@ -3,6 +3,7 @@ package ua.rd.pizza.service;
 import ua.rd.pizza.domain.Customer;
 import ua.rd.pizza.domain.Order;
 import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.infrastructure.annotation.Benchmark;
 import ua.rd.pizza.repository.OrderRepository;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class SimpleOrderService implements OrderService {
         this.pizzaService = pizzaService;
     }
 
-    @Override
+    @Override @Benchmark(false)
     public Order placeNewOrder(Customer customer, Integer... pizzasID) {
         List<Pizza> pizzas = new ArrayList<>();
 

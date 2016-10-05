@@ -1,11 +1,12 @@
 package ua.rd.pizza.infrastructure;
 
+import ua.rd.pizza.infrastructure.annotation.Benchmark;
 import ua.rd.pizza.infrastructure.annotation.PostCreate;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.security.spec.ECField;
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,12 +44,14 @@ public class ApplicationContext implements Context {
         beanBuilder.createBean();
         beanBuilder.callPostCreateMethod();
         beanBuilder.callInitMethod();
+        beanBuilder.createBeanProxy();
         return (T) beanBuilder.build();
     }
 
     private class BeanBuilder<T> {
 
         private Class<T> type;
+        private T original;
         private T instance;
 
         BeanBuilder(Class<T> type) {
@@ -57,7 +60,7 @@ public class ApplicationContext implements Context {
 
         public void createBean() {
             try {
-                this.instance = instantiateType();
+                this.instance = this.original = instantiateType();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -132,6 +135,39 @@ public class ApplicationContext implements Context {
                     }
                 }
             }
+        }
+
+        public void createBeanProxy() {
+            if (isAnyMethodAnnotated(Benchmark.class)) {
+                ClassLoader classLoader = this.getClass().getClassLoader();
+                Class<?>[] interfaces = type.getInterfaces();
+                instance = (T) Proxy.newProxyInstance(classLoader, interfaces, this::processBenchmark);
+            }
+        }
+
+        private boolean isAnyMethodAnnotated(Class<? extends Annotation> annotation) {
+            for (Method method : type.getMethods()) {
+                if (method.isAnnotationPresent(annotation)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Object processBenchmark(Object proxy,
+                                        Method method,
+                                        Object[] args) throws Throwable {
+
+            Benchmark annotation = type.getMethod(method.getName(),
+                    method.getParameterTypes()).getAnnotation(Benchmark.class);
+            if (annotation.value()) {
+                long start = System.nanoTime();
+                Object result = method.invoke(original, args);
+                long end = System.nanoTime();
+                System.out.println(method.getName() + " took " + (end - start) + " nano to execute.");
+                return result;
+            }
+            return method.invoke(original, args);
         }
     }
 }
