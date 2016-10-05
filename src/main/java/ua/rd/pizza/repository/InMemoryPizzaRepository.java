@@ -8,10 +8,13 @@ import java.util.Map;
 
 public class InMemoryPizzaRepository implements PizzaRepository {
 
-    private Map<Integer, Pizza> pizzaMap;
+    private final Map<Integer, Pizza> pizzaMap;
 
     public InMemoryPizzaRepository() {
         pizzaMap = new HashMap<>();
+    }
+
+    public void init() {
         pizzaMap.put(1, new Pizza(1, "Yummy Pizza", BigDecimal.valueOf(112.03), Pizza.Type.MEAT));
         pizzaMap.put(2, new Pizza(2, "Dummy Pizza", BigDecimal.valueOf(100.99), Pizza.Type.VEGETARIAN));
         pizzaMap.put(3, new Pizza(3, "Funny Pizza", BigDecimal.valueOf(130.89), Pizza.Type.SEA));

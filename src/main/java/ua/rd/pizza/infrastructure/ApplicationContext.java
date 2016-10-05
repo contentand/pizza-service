@@ -1,6 +1,8 @@
 package ua.rd.pizza.infrastructure;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.security.spec.ECField;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,6 +38,7 @@ public class ApplicationContext implements Context {
         if (type == null) throw new IllegalArgumentException("No Such Bean Found: " + beanName);
         BeanBuilder<?> beanBuilder = new BeanBuilder<>(type);
         beanBuilder.createBean();
+        beanBuilder.callInitMethod();
         return (T) beanBuilder.build();
     }
 
@@ -47,15 +50,29 @@ public class ApplicationContext implements Context {
         BeanBuilder(Class<T> type) {
             this.type = type;
         }
-        void createBean() {
+
+        public void createBean() {
             try {
                 this.instance = instantiateType();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-        T build() {
+
+        public T build() {
             return this.instance;
+        }
+
+        public void callInitMethod() {
+            try {
+                Method initMethod = type.getMethod("init");
+                initMethod.invoke(instance);
+            } catch (NoSuchMethodException e)
+            {
+
+            } catch (Exception e) {
+                  throw new RuntimeException(e);
+            }
         }
 
         private T instantiateType() throws Exception {
@@ -97,5 +114,7 @@ public class ApplicationContext implements Context {
             chars[0] = Character.toLowerCase(chars[0]);
             return new String(chars);
         }
+
+
     }
 }
