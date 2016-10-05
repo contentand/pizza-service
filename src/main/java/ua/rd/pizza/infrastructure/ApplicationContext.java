@@ -1,5 +1,8 @@
 package ua.rd.pizza.infrastructure;
 
+import ua.rd.pizza.infrastructure.annotation.PostCreate;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.spec.ECField;
@@ -38,6 +41,7 @@ public class ApplicationContext implements Context {
         if (type == null) throw new IllegalArgumentException("No Such Bean Found: " + beanName);
         BeanBuilder<?> beanBuilder = new BeanBuilder<>(type);
         beanBuilder.createBean();
+        beanBuilder.callPostCreateMethod();
         beanBuilder.callInitMethod();
         return (T) beanBuilder.build();
     }
@@ -66,10 +70,11 @@ public class ApplicationContext implements Context {
         public void callInitMethod() {
             try {
                 Method initMethod = type.getMethod("init");
-                initMethod.invoke(instance);
+                if (!initMethod.isAnnotationPresent(PostCreate.class)) {
+                    initMethod.invoke(instance);
+                }
             } catch (NoSuchMethodException e)
             {
-
             } catch (Exception e) {
                   throw new RuntimeException(e);
             }
@@ -116,5 +121,17 @@ public class ApplicationContext implements Context {
         }
 
 
+        public void callPostCreateMethod() {
+            Method[] methods = type.getMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(PostCreate.class)) {
+                    try {
+                        method.invoke(instance);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
     }
 }
