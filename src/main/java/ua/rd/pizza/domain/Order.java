@@ -13,6 +13,7 @@ public class Order {
     private Status status;
 
     public Order(Customer customer, List<Pizza> pizzas) {
+        if (customer == null || pizzas == null) throw new NullPointerException();
         this.status = Status.NEW;
         this.customer = customer;
         this.pizzas = pizzas;
@@ -20,6 +21,7 @@ public class Order {
 
     public Order(Long id, Customer customer, List<Pizza> pizzas) {
         this(customer, pizzas);
+        if (id == null) throw new NullPointerException();
         this.id = id;
     }
 
@@ -33,7 +35,6 @@ public class Order {
 
         Status(String ... statuses) {
             this.allowedStatuses = Arrays.asList(statuses);
-
         }
 
         boolean canChangeTo(Status status) {
@@ -47,6 +48,12 @@ public class Order {
 
     public boolean setStatus(Status newStatus) {
         if (this.status.canChangeTo(newStatus)) {
+            if (Status.DONE.equals(newStatus)) {
+                MemberCard card = customer.getMemberCard();
+                if (card != null) {
+                    card.setAmount(card.getAmount().add(getPrice()));
+                }
+            }
             this.status = newStatus;
             return true;
         }

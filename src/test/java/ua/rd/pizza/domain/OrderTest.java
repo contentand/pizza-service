@@ -1,5 +1,6 @@
 package ua.rd.pizza.domain;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -18,6 +19,14 @@ import static ua.rd.pizza.domain.Order.Status;
 
 @RunWith(Theories.class)
 public class OrderTest {
+
+    private Customer customer;
+
+    @Before
+    public void before() {
+        customer = new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA",
+                new MemberCard(1, new BigDecimal("0.00")));
+    }
 
     @DataPoints("LST")
     public static List<Order.Status[]> legalStatusTransitions() {
@@ -53,7 +62,7 @@ public class OrderTest {
         pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
         pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
         pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
-        Order order = new Order(1L, null, pizzas);
+        Order order = new Order(1L, customer, pizzas);
 
         // when
         BigDecimal price = order.getPrice();
@@ -71,7 +80,7 @@ public class OrderTest {
         pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
         pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
         pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
-        Order order = new Order(1L, null, pizzas);
+        Order order = new Order(1L, customer, pizzas);
 
         // when
         BigDecimal price = order.getPrice();
@@ -85,7 +94,8 @@ public class OrderTest {
         // given
         Status from = legalStatusTransition[0];
         Status to = legalStatusTransition[1];
-        Order order = new Order(new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA"),
+        Order order = new Order(1L, new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA",
+                new MemberCard(1, new BigDecimal("0.00"))),
                 Collections.emptyList());
         order.setStatus(from);
         // when
@@ -100,8 +110,7 @@ public class OrderTest {
         // given
         Status from = illegalStatusTransition[0];
         Status to = illegalStatusTransition[1];
-        Order order = new Order(new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA"),
-                Collections.emptyList());
+        Order order = new Order(customer, Collections.emptyList());
         order.setStatus(from);
         // when
         boolean result = order.setStatus(to);
@@ -113,5 +122,16 @@ public class OrderTest {
     }
 
     @Test
-
+    public void orderAmountShouldGoToMemberCard() throws Exception {
+        // given
+        List<Pizza> pizzas = new ArrayList<>();
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
+        Order order = new Order(customer, pizzas);
+        // when
+        order.setStatus(DONE);
+        // then
+        MemberCard card = customer.getMemberCard();
+        assertEquals(new BigDecimal("246.80"), card.getAmount());
+    }
 }
