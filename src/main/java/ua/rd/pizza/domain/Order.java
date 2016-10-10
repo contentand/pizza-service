@@ -3,23 +3,58 @@ package ua.rd.pizza.domain;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
 
 public class Order {
     private Long id;
     private Customer customer;
     private List<Pizza> pizzas;
+    private Status status;
 
-    public Order() {}
-
-    public Order(Long id, List<Pizza> pizzas) {
-        this.id = id;
-        this.pizzas = pizzas;
+    public Order() {
+        this.status = Status.NEW;
     }
 
     public Order(Customer customer, List<Pizza> pizzas) {
+        this();
         this.customer = customer;
         this.pizzas = pizzas;
+    }
+
+    public Order(Long id, Customer customer, List<Pizza> pizzas) {
+        this(customer, pizzas);
+        this.id = id;
+    }
+
+    public enum Status {
+        NEW("IN_PROGRESS", "CANCELLED", "DONE"),
+        IN_PROGRESS("CANCELLED", "DONE"),
+        CANCELLED(),
+        DONE();
+
+        private List<String> allowedStatuses;
+
+        Status(String ... statuses) {
+            this.allowedStatuses = Arrays.asList(statuses);
+
+        }
+
+        boolean canChangeTo(Status status) {
+            return allowedStatuses.contains(status.name());
+        }
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public boolean setStatus(Status newStatus) {
+        if (this.status.canChangeTo(newStatus)) {
+            this.status = newStatus;
+            return true;
+        }
+        return false;
     }
 
     public Long getId() {
