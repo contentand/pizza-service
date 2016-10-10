@@ -1,11 +1,14 @@
 package ua.rd.pizza.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class Order {
     private Long id;
     private Customer customer;
     private List<Pizza> pizzas;
+
+    public Order() {}
 
     public Order(Long id, List<Pizza> pizzas) {
         this.id = id;
@@ -48,5 +51,13 @@ public class Order {
                 ", customer=" + customer +
                 ", pizzas=" + pizzas +
                 '}';
+    }
+
+    public BigDecimal getPrice() {
+        BigDecimal price = new BigDecimal(0);
+        for (Pizza pizza : pizzas) {
+            price = price.add(pizza.getPrice());
+        }
+        return price;
     }
 }
