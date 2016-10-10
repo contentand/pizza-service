@@ -94,13 +94,31 @@ public class Order {
     }
 
     public BigDecimal getPrice() {
-        if (pizzas.size() == 0) {
-            return new BigDecimal(0);
-        } else if (pizzas.size() <= 4) {
-            return getOrdinaryPrice();
-        } else {
-            return getPriceWithMostExpensivePizzaDiscounted();
+        BigDecimal price = new BigDecimal(0);
+        if (pizzas.size() > 4) {
+            price = getPriceWithMostExpensivePizzaDiscounted();
+        } else if (pizzas.size() > 0){
+            price = getOrdinaryPrice();
         }
+        return loyalCustomerDiscount(price).stripTrailingZeros();
+    }
+
+    private BigDecimal loyalCustomerDiscount(BigDecimal price) {
+        MemberCard card = customer.getMemberCard();
+        if (card != null) {
+            BigDecimal tenPercentOfCard = percent("0.10", card.getAmount());
+            BigDecimal thirtyPercentOfPrice = percent("0.30", price);
+            if (thirtyPercentOfPrice.compareTo(tenPercentOfCard) < 0) {
+                return price.subtract(thirtyPercentOfPrice);
+            } else {
+                return price.subtract(tenPercentOfCard);
+            }
+        }
+        return price;
+    }
+
+    private BigDecimal percent(String rate, BigDecimal amount) {
+        return amount.multiply(new BigDecimal(rate));
     }
 
     private BigDecimal getOrdinaryPrice() {

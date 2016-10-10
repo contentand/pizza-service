@@ -68,25 +68,25 @@ public class OrderTest {
         BigDecimal price = order.getPrice();
 
         // then
-        assertEquals(new BigDecimal("416.80"), price);
+        assertEquals(new BigDecimal("416.8"), price);
     }
 
     @Test
     public void canDiscountOneMostExpensivePizzaIfMoreThanFourPizzasOrdered() throws Exception {
         // given
         List<Pizza> pizzas = new ArrayList<>();
-        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
-        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
-        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
-        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
-        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170"), Pizza.Type.MEAT));
+        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170"), Pizza.Type.MEAT));
+        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170"), Pizza.Type.MEAT));
         Order order = new Order(1L, customer, pizzas);
 
         // when
         BigDecimal price = order.getPrice();
 
         // then
-        assertEquals(new BigDecimal("705.80"), price);
+        assertEquals(new BigDecimal("705.8"), price);
     }
 
     @Theory
@@ -94,9 +94,7 @@ public class OrderTest {
         // given
         Status from = legalStatusTransition[0];
         Status to = legalStatusTransition[1];
-        Order order = new Order(1L, new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA",
-                new MemberCard(1, new BigDecimal("0.00"))),
-                Collections.emptyList());
+        Order order = new Order(1L, customer, Collections.emptyList());
         order.setStatus(from);
         // when
         boolean result = order.setStatus(to);
@@ -125,13 +123,45 @@ public class OrderTest {
     public void orderAmountShouldGoToMemberCard() throws Exception {
         // given
         List<Pizza> pizzas = new ArrayList<>();
-        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
-        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
         Order order = new Order(customer, pizzas);
         // when
         order.setStatus(DONE);
         // then
         MemberCard card = customer.getMemberCard();
-        assertEquals(new BigDecimal("246.80"), card.getAmount());
+        assertEquals(new BigDecimal("246.8"), card.getAmount());
+    }
+
+    @Test
+    public void tenPercentOfMemberCardAmountShouldBeDiscounted() throws Exception {
+        // given
+        Customer loyalCustomer = new Customer(1, "Sam Rodgers", "12 Lucky St., Kyiv",
+                new MemberCard(1, new BigDecimal("100")));
+        List<Pizza> pizzas = new ArrayList<>();
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        Order order = new Order(loyalCustomer, pizzas);
+        // when
+        BigDecimal amount = order.getPrice();
+        // then
+        assertEquals(new BigDecimal("236.8"), amount);
+    }
+
+    @Test
+    public void tenPercentOfMemberCardAmountMoreThanThirtyPercentOfPrice_discounts30Percent() throws Exception {
+        // given
+        Customer loyalCustomer = new Customer(1, "Sam Rodgers", "12 Lucky St., Kyiv",
+                new MemberCard(1, new BigDecimal("10000")));
+        List<Pizza> pizzas = new ArrayList<>();
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
+        Order order = new Order(loyalCustomer, pizzas);
+        // when
+        BigDecimal amount = order.getPrice();
+        // then
+        assertEquals(new BigDecimal("345.52"), amount);
     }
 }

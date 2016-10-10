@@ -25,7 +25,7 @@ public class MemberCard {
     }
 
     public BigDecimal getAmount() {
-        return amount;
+        return amount.stripTrailingZeros();
     }
 
     public void setAmount(BigDecimal amount) {
