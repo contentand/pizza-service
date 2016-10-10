@@ -26,4 +26,22 @@ public class OrderTest {
         // then
         assertEquals(new BigDecimal("416.80"), price);
     }
+
+    @Test
+    public void canDiscountOneMostExpensivePizzaIfMoreThanFourPizzasOrdered() throws Exception {
+        // given
+        List<Pizza> pizzas = new ArrayList<>();
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.40"), Pizza.Type.VEGETARIAN));
+        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
+        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
+        pizzas.add(new Pizza(2, "Hawaii", new BigDecimal("170.00"), Pizza.Type.MEAT));
+        Order order = new Order(1L, pizzas);
+
+        // when
+        BigDecimal price = order.getPrice();
+
+        // then
+        assertEquals(new BigDecimal("705.80"), price);
+    }
 }
