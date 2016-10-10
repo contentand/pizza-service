@@ -12,12 +12,8 @@ public class Order {
     private List<Pizza> pizzas;
     private Status status;
 
-    public Order() {
-        this.status = Status.NEW;
-    }
-
     public Order(Customer customer, List<Pizza> pizzas) {
-        this();
+        this.status = Status.NEW;
         this.customer = customer;
         this.pizzas = pizzas;
     }

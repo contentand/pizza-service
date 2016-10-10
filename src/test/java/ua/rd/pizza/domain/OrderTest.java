@@ -1,7 +1,5 @@
 package ua.rd.pizza.domain;
 
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.FromDataPoints;
@@ -11,6 +9,7 @@ import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -86,7 +85,8 @@ public class OrderTest {
         // given
         Status from = legalStatusTransition[0];
         Status to = legalStatusTransition[1];
-        Order order = new Order();
+        Order order = new Order(new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA"),
+                Collections.emptyList());
         order.setStatus(from);
         // when
         boolean result = order.setStatus(to);
@@ -100,7 +100,8 @@ public class OrderTest {
         // given
         Status from = illegalStatusTransition[0];
         Status to = illegalStatusTransition[1];
-        Order order = new Order();
+        Order order = new Order(new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA"),
+                Collections.emptyList());
         order.setStatus(from);
         // when
         boolean result = order.setStatus(to);
@@ -110,4 +111,7 @@ public class OrderTest {
         }
         assertFalse(result);
     }
+
+    @Test
+
 }

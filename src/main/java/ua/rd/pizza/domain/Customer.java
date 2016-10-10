@@ -3,10 +3,12 @@ package ua.rd.pizza.domain;
 public class Customer {
     private Integer id;
     private String name;
+    private String address;
 
-    public Customer(Integer id, String name) {
+    public Customer(Integer id, String name, String address) {
         this.id = id;
         this.name = name;
+        this.address = address;
     }
 
     public Integer getId() {
@@ -25,11 +27,20 @@ public class Customer {
         this.name = name;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }
