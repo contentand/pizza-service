@@ -16,7 +16,7 @@ public class AppRunner {
 
         ConfigurableApplicationContext repoContext = new ClassPathXmlApplicationContext("repoContext.xml");
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"appContext.xml"}, repoContext);
-        OrderService orderService = context.getBean("orderService", OrderService.class);
+        OrderService orderService = context.getBean(OrderService.class);
         order = orderService.placeNewOrder(customer, 1, 2, 3);
         System.out.println(order);
 

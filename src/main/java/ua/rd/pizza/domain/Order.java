@@ -1,16 +1,23 @@
 package ua.rd.pizza.domain;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
+@Component
+@Scope("prototype")
 public class Order {
     private Long id;
     private Customer customer;
     private List<Pizza> pizzas;
     private Status status;
+
+    public Order() {}
 
     public Order(Customer customer, List<Pizza> pizzas) {
         if (customer == null || pizzas == null) throw new NullPointerException();

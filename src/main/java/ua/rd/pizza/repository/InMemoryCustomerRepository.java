@@ -1,13 +1,17 @@
 package ua.rd.pizza.repository;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ua.rd.pizza.domain.Customer;
 import ua.rd.pizza.domain.MemberCard;
 import ua.rd.pizza.infrastructure.annotation.PostCreate;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+@Repository
 public class InMemoryCustomerRepository implements CustomerRepository {
 
     private final Map<Integer, Customer> customerMap;
@@ -16,7 +20,7 @@ public class InMemoryCustomerRepository implements CustomerRepository {
         customerMap = new HashMap<>();
     }
 
-    @PostCreate
+    @PostConstruct
     public void init() {
         customerMap.put(1, new Customer(1,
                 "Semen Avdeevich",
