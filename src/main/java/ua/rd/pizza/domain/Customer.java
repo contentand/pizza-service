@@ -1,9 +1,14 @@
 package ua.rd.pizza.domain;
 
+import javax.persistence.*;
+
+@Entity
 public class Customer {
+    @Id @GeneratedValue(strategy= GenerationType.TABLE)
     private Integer id;
     private String name;
     private String address;
+    @ManyToOne
     private MemberCard memberCard;
 
     public Customer(Integer id, String name, String address, MemberCard memberCard) {

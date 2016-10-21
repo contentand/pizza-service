@@ -3,18 +3,31 @@ package ua.rd.pizza.domain;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("prototype")
+@Entity(name = "orders")
 public class Order {
+    @Id @GeneratedValue(strategy=GenerationType.TABLE)
     private Long id;
+    @ManyToOne
     private Customer customer;
-    private List<Pizza> pizzas;
+    @ElementCollection
+    @CollectionTable
+    @MapKeyClass(Pizza.class)
+    @MapKeyColumn
+    @Column(name="count")
+    private Map<Pizza, Long> pizzas;
     private Status status;
 
     public Order() {}
@@ -23,13 +36,22 @@ public class Order {
         if (customer == null || pizzas == null) throw new NullPointerException();
         this.status = Status.NEW;
         this.customer = customer;
-        this.pizzas = pizzas;
+        this.pizzas = pizzas.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
     public Order(Long id, Customer customer, List<Pizza> pizzas) {
         this(customer, pizzas);
         if (id == null) throw new NullPointerException();
         this.id = id;
+    }
+
+    public void setPizzas(List<Pizza> pizzas) {
+
+        Map<Pizza, Long> piz = pizzas.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        for (Pizza p : pizzas) {
+            this.pizzas.merge(p, piz.get(p), Long::sum);
+        }
     }
 
     public enum Status {
@@ -73,14 +95,6 @@ public class Order {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public List<Pizza> getPizzas() {
-        return pizzas;
-    }
-
-    public void setPizzas(List<Pizza> pizzas) {
-        this.pizzas = pizzas;
     }
 
     public Customer getCustomer() {
@@ -130,8 +144,8 @@ public class Order {
 
     private BigDecimal getOrdinaryPrice() {
         BigDecimal price = new BigDecimal(0);
-        for (Pizza pizza : pizzas) {
-            price = price.add(pizza.getPrice());
+        for (Pizza pizza : pizzas.keySet()) {
+            price = price.add(pizza.getPrice().multiply(new BigDecimal(pizzas.get(pizza))));
         }
         return price;
     }
@@ -148,6 +162,7 @@ public class Order {
     }
 
     private Pizza getMostExpensivePizza() {
+        List<Pizza> pizzas = new ArrayList<>(this.pizzas.keySet());
         Pizza mostExpensivePizza = pizzas.get(0);
         for (Pizza pizza : pizzas) {
             if (pizza.getPrice().compareTo(mostExpensivePizza.getPrice()) > 0) {

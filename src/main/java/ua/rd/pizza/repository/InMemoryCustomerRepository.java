@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ua.rd.pizza.domain.Customer;
 import ua.rd.pizza.domain.MemberCard;
-import ua.rd.pizza.infrastructure.annotation.PostCreate;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;

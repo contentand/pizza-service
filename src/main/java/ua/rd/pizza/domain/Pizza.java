@@ -1,8 +1,15 @@
 package ua.rd.pizza.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Pizza {
+@Entity
+public class Pizza implements Serializable {
+    @Id @GeneratedValue(strategy= GenerationType.TABLE)
     private Integer id;
     private String name;
     private BigDecimal price;
@@ -11,6 +18,8 @@ public class Pizza {
     public enum Type {
         VEGETARIAN, SEA, MEAT
     }
+
+    public Pizza() {}
 
     public Pizza(Integer id, String name, BigDecimal price, Type type) {
         this.id = id;
