@@ -1,39 +1,51 @@
 package ua.rd.pizza;
 
-import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.domain.Employee;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.math.BigDecimal;
 
 public class JpaRunner {
     public static void main(String[] args) {
 
-        Pizza pizza = new Pizza();
-        pizza.setId(null);
-        pizza.setName("Bavaria");
-        pizza.setPrice(new BigDecimal("123.23"));
-        pizza.setType(Pizza.Type.MEAT);
+        EntityManagerFactory entityManagerFactory = null;
+        try{
+            entityManagerFactory = Persistence.createEntityManagerFactory("jpa");
+            EntityManager entityManager = null;
+            try {
+                entityManager = entityManagerFactory.createEntityManager();
+                EntityTransaction tx = null;
 
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("jpa");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        EntityTransaction tx = entityManager.getTransaction();
+                try {
+                    tx = entityManager.getTransaction();
+                    tx.begin();
 
-        entityManager.clear();
+                    // BEGIN
+                    Employee empl1 = new Employee("John Smeets", 2);
+                    Employee empl2 = new Employee("Walter Scott", 1);
 
-        tx.begin();
-        entityManager.persist(pizza);
-        tx.commit();
-        entityManager.close();
+                    entityManager.persist(empl1);
+                    entityManager.persist(empl2);
+                    // END
 
-        Integer id = pizza.getId();
+                    tx.commit();
+                } finally {
+                    if (tx != null && tx.isActive()) {
+                        tx.rollback();
+                    }
+                }
+            } finally {
+                if (entityManager != null && entityManager.isOpen()) {
+                    entityManager.close();
+                }
+            }
+        } finally {
+            if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
+                entityManagerFactory.close();
+            }
 
-        entityManager = entityManagerFactory.createEntityManager();
-
-        Pizza pizzaRetrieved = entityManager.find(Pizza.class, id);
-        System.out.println(pizzaRetrieved);
-        entityManagerFactory.close();
+        }
     }
 }
