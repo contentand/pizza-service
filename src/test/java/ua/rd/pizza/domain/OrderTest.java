@@ -9,6 +9,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,7 @@ public class OrderTest {
     @Before
     public void before() {
         customer = new Customer(1, "Sam Anderson", "7 Amelia St, Austin, TX, USA",
-                new MemberCard(1, new BigDecimal("0.00")));
+                new MemberCard(1, LocalDate.now(), new BigDecimal("0.00")));
     }
 
     @DataPoints("LST")
@@ -137,7 +138,7 @@ public class OrderTest {
     public void tenPercentOfMemberCardAmountShouldBeDiscounted() throws Exception {
         // given
         Customer loyalCustomer = new Customer(1, "Sam Rodgers", "12 Lucky St., Kyiv",
-                new MemberCard(1, new BigDecimal("100")));
+                new MemberCard(1, LocalDate.now(), new BigDecimal("100")));
         List<Pizza> pizzas = new ArrayList<>();
         pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
         pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
@@ -152,7 +153,7 @@ public class OrderTest {
     public void tenPercentOfMemberCardAmountMoreThanThirtyPercentOfPrice_discounts30Percent() throws Exception {
         // given
         Customer loyalCustomer = new Customer(1, "Sam Rodgers", "12 Lucky St., Kyiv",
-                new MemberCard(1, new BigDecimal("10000")));
+                new MemberCard(1, LocalDate.now(), new BigDecimal("10000")));
         List<Pizza> pizzas = new ArrayList<>();
         pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));
         pizzas.add(new Pizza(1, "Margarita", new BigDecimal("123.4"), Pizza.Type.VEGETARIAN));

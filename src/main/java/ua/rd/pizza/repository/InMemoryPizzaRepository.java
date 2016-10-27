@@ -25,7 +25,13 @@ public class InMemoryPizzaRepository implements PizzaRepository {
     }
 
     @Override
-    public Pizza get(Integer id) {
+    public Pizza find(Integer id) {
         return pizzaMap.get(id);
+    }
+
+    @Override
+    public Pizza save(Pizza pizza) {
+        return pizza;
+        // nothing : )
     }
 }

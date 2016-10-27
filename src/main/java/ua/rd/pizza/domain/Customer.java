@@ -2,14 +2,18 @@ package ua.rd.pizza.domain;
 
 import javax.persistence.*;
 
-@Entity
+@Entity @Table(name = "customers")
 public class Customer {
-    @Id @GeneratedValue(strategy= GenerationType.TABLE)
+    @TableGenerator(name = "ids", table = "ids", pkColumnValue = "customers")
+    @Id @GeneratedValue(generator = "ids")
     private Integer id;
     private String name;
     private String address;
     @ManyToOne
     private MemberCard memberCard;
+
+    public Customer() {
+    }
 
     public Customer(Integer id, String name, String address, MemberCard memberCard) {
         this.id = id;

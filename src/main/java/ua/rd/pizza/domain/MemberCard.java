@@ -1,25 +1,24 @@
 package ua.rd.pizza.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-@Entity
+@Entity @Table(name = "cards")
 public class MemberCard {
-    @Id @GeneratedValue(strategy= GenerationType.TABLE)
+    @TableGenerator(name = "ids", table = "ids", pkColumnValue = "cards")
+    @Id @GeneratedValue(generator = "ids")
     private Integer id;
+    private LocalDate date;
     private BigDecimal amount;
 
-    public MemberCard(BigDecimal amount) {
-        this.amount = amount;
+    public MemberCard() {
     }
 
-    public MemberCard(Integer id, BigDecimal amount) {
-        this(amount);
-        if (amount == null) throw new NullPointerException();
+    public MemberCard(Integer id, LocalDate date, BigDecimal amount) {
         this.id = id;
+        this.date = date;
+        this.amount = amount;
     }
 
     public Integer getId() {
@@ -36,5 +35,13 @@ public class MemberCard {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

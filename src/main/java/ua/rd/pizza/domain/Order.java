@@ -7,27 +7,29 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
-@Scope("prototype")
-@Entity(name = "orders")
+@Component @Scope("prototype")
+@Entity  @Table(name = "orders")
 public class Order {
-    @Id @GeneratedValue(strategy=GenerationType.TABLE)
+
+    @TableGenerator(name = "ids", table = "ids", pkColumnValue = "orders")
+    @Id @GeneratedValue(generator = "ids")
     private Long id;
+
     @ManyToOne
     private Customer customer;
+
     @ElementCollection
     @CollectionTable
     @MapKeyClass(Pizza.class)
-    @MapKeyColumn
+    @MapKeyColumn(name = "pizza_id")
     @Column(name="count")
     private Map<Pizza, Long> pizzas;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public Order() {}
@@ -37,11 +39,11 @@ public class Order {
         this.status = Status.NEW;
         this.customer = customer;
         this.pizzas = pizzas.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println(pizzas.toString());
     }
 
     public Order(Long id, Customer customer, List<Pizza> pizzas) {
         this(customer, pizzas);
-        if (id == null) throw new NullPointerException();
         this.id = id;
     }
 

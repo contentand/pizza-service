@@ -17,7 +17,8 @@ public class InMemoryOrderRepository implements OrderRepository {
     }
 
     @Override
-    public void saveOrder(Order newOrder) {
-
+    public Order save(Order order) {
+        // do nothing
+        return order;
     }
 }

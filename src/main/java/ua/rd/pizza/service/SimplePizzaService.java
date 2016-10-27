@@ -17,6 +17,6 @@ public class SimplePizzaService implements PizzaService {
 
     @Override
     public Pizza getPizzaByID(Integer id) {
-        return pizzaRepository.get(id);
+        return pizzaRepository.find(id);
     }
 }
