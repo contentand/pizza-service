@@ -8,7 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ua.rd.pizza.domain.Customer;
 import ua.rd.pizza.domain.Order;
-import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.domain.product.Pizza;
 
 import javax.sql.DataSource;
 

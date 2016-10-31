@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
 import ua.rd.pizza.domain.Customer;
+import ua.rd.pizza.domain.NewOrder;
 import ua.rd.pizza.domain.Order;
-import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.domain.product.Pizza;
 import ua.rd.pizza.infrastructure.annotation.Benchmark;
 import ua.rd.pizza.repository.OrderRepository;
 
@@ -37,6 +38,11 @@ public class SimpleOrderService implements OrderService {
 
         orderRepository.save(newOrder);
         return newOrder;
+    }
+
+    @Override
+    public void place(NewOrder order) {
+
     }
 
     @Lookup("order")

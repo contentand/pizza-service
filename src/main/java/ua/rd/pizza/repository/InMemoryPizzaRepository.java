@@ -1,7 +1,7 @@
 package ua.rd.pizza.repository;
 
 import org.springframework.stereotype.Repository;
-import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.domain.product.Pizza;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;

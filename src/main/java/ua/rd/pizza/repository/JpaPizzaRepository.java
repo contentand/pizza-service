@@ -3,7 +3,7 @@ package ua.rd.pizza.repository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.domain.product.Pizza;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

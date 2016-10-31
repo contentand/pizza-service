@@ -2,7 +2,7 @@ package ua.rd.pizza.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.rd.pizza.domain.Pizza;
+import ua.rd.pizza.domain.product.Pizza;
 import ua.rd.pizza.repository.PizzaRepository;
 
 @Service

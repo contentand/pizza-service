@@ -1,10 +1,6 @@
 package ua.rd.pizza;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ua.rd.pizza.domain.Pizza;
-import ua.rd.pizza.repository.JpaPizzaRepository;
-import ua.rd.pizza.repository.PizzaRepository;
+import ua.rd.pizza.domain.product.Pizza;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;

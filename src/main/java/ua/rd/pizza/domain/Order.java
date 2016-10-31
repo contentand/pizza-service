@@ -2,6 +2,7 @@ package ua.rd.pizza.domain;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import ua.rd.pizza.domain.product.Pizza;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,12 +12,21 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component @Scope("prototype")
-@Entity  @Table(name = "orders")
+@Component
+@Scope("prototype")
+@Entity
+@Table(name = "orders")
 public class Order {
 
-    @TableGenerator(name = "ids", table = "ids", pkColumnValue = "orders")
-    @Id @GeneratedValue(generator = "ids")
+    @TableGenerator(
+            name = "ORDER_GENERATOR",
+            table = "IDS",
+            pkColumnName = "NAME",
+            pkColumnValue = "ORDERS",
+            valueColumnName = "VALUE",
+            allocationSize = 1)
+    @Id
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ORDER_GENERATOR")
     private Long id;
 
     @ManyToOne
@@ -80,10 +90,10 @@ public class Order {
     public boolean setStatus(Status newStatus) {
         if (this.status.canChangeTo(newStatus)) {
             if (Status.DONE.equals(newStatus)) {
-                MemberCard card = customer.getMemberCard();
-                if (card != null) {
-                    card.setAmount(card.getAmount().add(getPrice()));
-                }
+//                MemberCard card = customer.getMemberCard();
+//                if (card != null) {
+//                    card.setAmount(card.getAmount().add(getPrice()));
+//                }
             }
             this.status = newStatus;
             return true;
@@ -119,7 +129,7 @@ public class Order {
     public BigDecimal getPrice() {
         BigDecimal price = new BigDecimal(0);
         if (pizzas.size() > 4) {
-            price = getPriceWithMostExpensivePizzaDiscounted();
+//            price = getPriceWithMostExpensivePizzaDiscounted();
         } else if (pizzas.size() > 0){
             price = getOrdinaryPrice();
         }
@@ -127,16 +137,16 @@ public class Order {
     }
 
     private BigDecimal loyalCustomerDiscount(BigDecimal price) {
-        MemberCard card = customer.getMemberCard();
-        if (card != null) {
-            BigDecimal tenPercentOfCard = percent("0.10", card.getAmount());
-            BigDecimal thirtyPercentOfPrice = percent("0.30", price);
-            if (thirtyPercentOfPrice.compareTo(tenPercentOfCard) < 0) {
-                return price.subtract(thirtyPercentOfPrice);
-            } else {
-                return price.subtract(tenPercentOfCard);
-            }
-        }
+//        MemberCard card = customer.getMemberCard();
+//        if (card != null) {
+//            BigDecimal tenPercentOfCard = percent("0.10", card.getAmount());
+//            BigDecimal thirtyPercentOfPrice = percent("0.30", price);
+//            if (thirtyPercentOfPrice.compareTo(tenPercentOfCard) < 0) {
+//                return price.subtract(thirtyPercentOfPrice);
+//            } else {
+//                return price.subtract(tenPercentOfCard);
+//            }
+//        }
         return price;
     }
 
@@ -146,31 +156,31 @@ public class Order {
 
     private BigDecimal getOrdinaryPrice() {
         BigDecimal price = new BigDecimal(0);
-        for (Pizza pizza : pizzas.keySet()) {
-            price = price.add(pizza.getPrice().multiply(new BigDecimal(pizzas.get(pizza))));
-        }
+//        for (Pizza pizza : pizzas.keySet()) {
+//            price = price.add(pizza.getPrice().multiply(new BigDecimal(pizzas.get(pizza))));
+//        }
         return price;
     }
 
-    private BigDecimal getPriceWithMostExpensivePizzaDiscounted() {
-        Pizza mostExpensivePizza = getMostExpensivePizza();
-        BigDecimal price = getOrdinaryPrice();
-        return price.subtract(discount("0.3", mostExpensivePizza));
-    }
+//    private BigDecimal getPriceWithMostExpensivePizzaDiscounted() {
+//        Pizza mostExpensivePizza = getMostExpensivePizza();
+//        BigDecimal price = getOrdinaryPrice();
+//        return price.subtract(discount("0.3", mostExpensivePizza));
+//    }
 
-    private BigDecimal discount(String discountRate, Pizza mostExpensivePizza) {
-        return mostExpensivePizza.getPrice().multiply(new BigDecimal(discountRate))
-                .round(new MathContext(2, RoundingMode.UP));
-    }
+//    private BigDecimal discount(String discountRate, Pizza mostExpensivePizza) {
+//        return mostExpensivePizza.getPrice().multiply(new BigDecimal(discountRate))
+//                .round(new MathContext(2, RoundingMode.UP));
+//    }
 
-    private Pizza getMostExpensivePizza() {
-        List<Pizza> pizzas = new ArrayList<>(this.pizzas.keySet());
-        Pizza mostExpensivePizza = pizzas.get(0);
-        for (Pizza pizza : pizzas) {
-            if (pizza.getPrice().compareTo(mostExpensivePizza.getPrice()) > 0) {
-                mostExpensivePizza = pizza;
-            }
-        }
-        return mostExpensivePizza;
-    }
+//    private Pizza getMostExpensivePizza() {
+//        List<Pizza> pizzas = new ArrayList<>(this.pizzas.keySet());
+//        Pizza mostExpensivePizza = pizzas.get(0);
+//        for (Pizza pizza : pizzas) {
+//            if (pizza.getPrice().compareTo(mostExpensivePizza.getPrice()) > 0) {
+//                mostExpensivePizza = pizza;
+//            }
+//        }
+//        return mostExpensivePizza;
+//    }
 }

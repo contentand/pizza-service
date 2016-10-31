@@ -7,6 +7,7 @@ import org.junit.experimental.theories.FromDataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import ua.rd.pizza.domain.product.Pizza;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
