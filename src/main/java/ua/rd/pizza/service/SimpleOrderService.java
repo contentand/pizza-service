@@ -9,8 +9,8 @@ import ua.rd.pizza.repository.OrderRepository;
 @Service
 public class SimpleOrderService implements OrderService {
 
-    private final OrderRepository orderRepository;
-    private final MemberCardService memberCardService;
+    private OrderRepository orderRepository;
+    private MemberCardService memberCardService;
 
     @Autowired
     public SimpleOrderService(OrderRepository orderRepository, MemberCardService memberCardService) {

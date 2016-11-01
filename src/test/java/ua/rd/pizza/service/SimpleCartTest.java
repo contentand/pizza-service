@@ -1,4 +1,4 @@
-package ua.rd.pizza.domain;
+package ua.rd.pizza.service;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -16,7 +16,7 @@ public class AppJavaConfig {
     @Autowired
     CustomerRepository customerRepository;
 
-    @Bean
+    @Bean // TODO : Remove and reconfigure once MVC + Security configured
     public Customer customer() {
         Customer ctm = new Customer();
         ctm.setName("Peter");

@@ -13,7 +13,6 @@ public class SimpleProductService implements ProductService {
 
     private ProductRepository productRepository;
 
-    public SimpleProductService() {}
     @Autowired
     public SimpleProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;

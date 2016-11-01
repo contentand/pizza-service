@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("WeakerAccess")
 public class SimpleDiscountService implements DiscountService {
 
     private Set<Discount> discounts;
