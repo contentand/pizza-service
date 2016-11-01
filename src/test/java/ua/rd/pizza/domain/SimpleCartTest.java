@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import ua.rd.pizza.domain.discount.Discount;
+import ua.rd.pizza.domain.other.Customer;
+import ua.rd.pizza.domain.other.Order;
+import ua.rd.pizza.domain.product.Pizza;
 import ua.rd.pizza.domain.product.Product;
 import ua.rd.pizza.exception.*;
 import ua.rd.pizza.service.*;
@@ -18,6 +21,7 @@ public class SimpleCartTest extends Mockito {
 
     private static final String VALID_VOUCHER = "M8811";
     private static final String INVALID_VOUCHER = "INVALID";
+    private static final Long VALID_PIZZA_PRODUCT_ID = 24L;
     private static final Long VALID_PRODUCT_ID = 22L;
     private static final Long INVALID_PRODUCT_ID = 32L;
 
@@ -59,6 +63,7 @@ public class SimpleCartTest extends Mockito {
         doThrow(NullPointerException.class).when(productService).getById(eq(null));
         doThrow(NoSuchProductException.class).when(productService).getById(eq(INVALID_PRODUCT_ID));
         when(productService.getById(eq(VALID_PRODUCT_ID))).thenReturn(product);
+        when(productService.getById(eq(VALID_PIZZA_PRODUCT_ID))).thenReturn(mock(Pizza.class));
         return productService;
     }
 
@@ -116,10 +121,21 @@ public class SimpleCartTest extends Mockito {
     @Test
     public void addItem_validInput_returnsValidData() throws Exception {
         this.cart.addItem(VALID_PRODUCT_ID, 2);
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(new BigDecimal("468.42"), order.getTotal());
         assertEquals(new BigDecimal("455.18"), order.getTotalWithDiscount());
         assertEquals(new BigDecimal("13.24"), order.getDiscountAmount());
+    }
+
+    @Test(expected = PizzaLimitExceededException.class)
+    public void addItem_addPizzasMoreThanLimit_throwsPizzaLimitExceededException() throws Exception {
+        this.cart.addItem(VALID_PIZZA_PRODUCT_ID, 11);
+    }
+
+    @Test
+    public void addItem_addPizzasLessThanLimit_throwsPizzaLimitExceededException() throws Exception {
+        this.cart.addItem(VALID_PIZZA_PRODUCT_ID, 9);
+        this.cart.addItem(VALID_PIZZA_PRODUCT_ID, 1);
     }
 
     @Test(expected = NoQuantityException.class)
@@ -151,7 +167,7 @@ public class SimpleCartTest extends Mockito {
     public void removeItem_validInput_returnsValidData() throws Exception {
         this.cart.addItem(VALID_PRODUCT_ID, 3);
         this.cart.removeItem(VALID_PRODUCT_ID, 1);
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(new BigDecimal("468.42"), order.getTotal());
         assertEquals(new BigDecimal("455.18"), order.getTotalWithDiscount());
         assertEquals(new BigDecimal("13.24"), order.getDiscountAmount());
@@ -171,7 +187,7 @@ public class SimpleCartTest extends Mockito {
     public void addVoucher_validVoucher_returnsValidData() throws Exception {
         this.cart.addItem(VALID_PRODUCT_ID, 1);
         this.cart.addVoucher(VALID_VOUCHER);
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(new BigDecimal("234.21"), order.getTotal());
         assertEquals(new BigDecimal("217.97"), order.getTotalWithDiscount());
         assertEquals(new BigDecimal("16.24"), order.getDiscountAmount());
@@ -182,7 +198,7 @@ public class SimpleCartTest extends Mockito {
         this.cart.addItem(VALID_PRODUCT_ID, 1);
         this.cart.addVoucher(VALID_VOUCHER);
         this.cart.addVoucher(VALID_VOUCHER);
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(new BigDecimal("234.21"), order.getTotal());
         assertEquals(new BigDecimal("217.97"), order.getTotalWithDiscount());
         assertEquals(new BigDecimal("16.24"), order.getDiscountAmount());
@@ -203,7 +219,7 @@ public class SimpleCartTest extends Mockito {
         this.cart.addItem(VALID_PRODUCT_ID, 1);
         this.cart.addVoucher(VALID_VOUCHER);
         this.cart.removeVoucher(VALID_VOUCHER);
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(new BigDecimal("234.21"), order.getTotal());
         assertEquals(new BigDecimal("220.97"), order.getTotalWithDiscount());
         assertEquals(new BigDecimal("13.24"), order.getDiscountAmount());
@@ -213,7 +229,7 @@ public class SimpleCartTest extends Mockito {
     public void removeVoucher_unsetValidVoucher_doesNothing() throws Exception {
         this.cart.addItem(VALID_PRODUCT_ID, 1);
         this.cart.removeVoucher(VALID_VOUCHER);
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(new BigDecimal("234.21"), order.getTotal());
         assertEquals(new BigDecimal("220.97"), order.getTotalWithDiscount());
         assertEquals(new BigDecimal("13.24"), order.getDiscountAmount());
@@ -224,7 +240,7 @@ public class SimpleCartTest extends Mockito {
         this.cart.addItem(VALID_PRODUCT_ID, 1);
         this.cart.addVoucher(VALID_VOUCHER);
         this.cart.cancel();
-        NewOrder order = this.cart.getOrder();
+        Order order = this.cart.getOrder();
         assertEquals(Collections.EMPTY_MAP, order.getDiscounts());
         assertEquals(Collections.EMPTY_MAP, order.getProducts());
         assertEquals(new BigDecimal("0"), order.getTotal());
@@ -238,15 +254,15 @@ public class SimpleCartTest extends Mockito {
         this.cart.addVoucher(VALID_VOUCHER);
         this.cart.buy();
 
-        ArgumentCaptor<NewOrder> orderArgumentCaptor = ArgumentCaptor.forClass(NewOrder.class);
+        ArgumentCaptor<Order> orderArgumentCaptor = ArgumentCaptor.forClass(Order.class);
         verify(orderService).place(orderArgumentCaptor.capture());
 
-        NewOrder persistedOrder = orderArgumentCaptor.getValue();
+        Order persistedOrder = orderArgumentCaptor.getValue();
         assertEquals(new BigDecimal("234.21"), persistedOrder.getTotal());
         assertEquals(new BigDecimal("217.97"), persistedOrder.getTotalWithDiscount());
         assertEquals(new BigDecimal("16.24"), persistedOrder.getDiscountAmount());
 
-        NewOrder cartOrder = this.cart.getOrder();
+        Order cartOrder = this.cart.getOrder();
         assertEquals(Collections.EMPTY_MAP, cartOrder.getDiscounts());
         assertEquals(Collections.EMPTY_MAP, cartOrder.getProducts());
         assertEquals(new BigDecimal("0"), cartOrder.getTotal());

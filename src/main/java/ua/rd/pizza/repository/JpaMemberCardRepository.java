@@ -2,24 +2,25 @@ package ua.rd.pizza.repository;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ua.rd.pizza.domain.other.Customer;
+import ua.rd.pizza.domain.other.MemberCard;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
 
-@Repository @Primary @Transactional
-public class JpaCustomerRepository implements CustomerRepository {
+@Repository @Primary
+public class JpaMemberCardRepository implements MemberCardRepository {
 
     private @PersistenceContext EntityManager entityManager;
 
     @Override
-    public Customer getById(Integer id) {
-        return this.entityManager.find(Customer.class, id);
+    public MemberCard getByCustomer(Customer customer) {
+        return null;
     }
 
     @Override
-    public Customer save(Customer customer) {
-        return entityManager.merge(customer);
+    public void addAmount(Customer customer, BigDecimal amount) {
+
     }
 }

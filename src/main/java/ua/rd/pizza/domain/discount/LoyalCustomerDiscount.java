@@ -1,21 +1,24 @@
 package ua.rd.pizza.domain.discount;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import ua.rd.pizza.domain.Customer;
-import ua.rd.pizza.domain.MemberCard;
+import org.springframework.stereotype.Component;
+import ua.rd.pizza.domain.other.Customer;
+import ua.rd.pizza.domain.other.MemberCard;
 import ua.rd.pizza.domain.product.Product;
 import ua.rd.pizza.service.MemberCardService;
 
-import javax.naming.OperationNotSupportedException;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Map;
 
+@Entity
 public class LoyalCustomerDiscount extends Discount {
 
-    private final MemberCardService cardService;
+    @Transient private MemberCardService cardService;
 
     public LoyalCustomerDiscount() {
-        this.cardService = null;
+        super();
     }
 
     @Autowired
@@ -43,8 +46,9 @@ public class LoyalCustomerDiscount extends Discount {
                 .reduce(NO_DISCOUNT, BigDecimal::add);
 
         BigDecimal discountAmount = memberCard.getAmount().multiply(DISCOUNT_RATE);
+        BigDecimal limitAmount = total.multiply(DISCOUNT_RATE_LIMIT);
 
-        return discountAmount; // TODO PLEASE FINISH!!!
+        return discountAmount.compareTo(limitAmount) >= 0 ? discountAmount : limitAmount;
 
     }
 }

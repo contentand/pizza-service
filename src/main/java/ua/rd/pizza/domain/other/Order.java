@@ -1,4 +1,4 @@
-package ua.rd.pizza.domain;
+package ua.rd.pizza.domain.other;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -13,19 +13,19 @@ import java.util.Map;
 @Scope("prototype")
 @Entity
 @Table(name = "orders")
-public class NewOrder {
-
-    @TableGenerator(
-            name = "ORDER_GENERATOR",
-            table = "IDS",
-            pkColumnName = "NAME",
-            pkColumnValue = "ORDERS",
-            valueColumnName = "VALUE",
-            allocationSize = 1)
+@TableGenerator(
+        name = "ORDER_GENERATOR",
+        table = "IDS",
+        pkColumnName = "NAME",
+        pkColumnValue = "ORDERS",
+        valueColumnName = "VALUE",
+        initialValue = 1,
+        allocationSize = 1)
+public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "ORDER_GENERATOR")
+    @GeneratedValue(generator = "ORDER_GENERATOR")
     private Long id;
-    private Customer customer;
+    private @ManyToOne Customer customer;
     private BigDecimal total;
     private BigDecimal discountAmount;
     private BigDecimal totalWithDiscount;
@@ -43,9 +43,9 @@ public class NewOrder {
     @Column(name="amount")
     private Map<Discount, BigDecimal> discounts;
 
-    public NewOrder() {}
+    public Order() {}
 
-    public NewOrder(Customer customer, Map<Product, Integer> products, Map<Discount, BigDecimal> discounts) {
+    public Order(Customer customer, Map<Product, Integer> products, Map<Discount, BigDecimal> discounts) {
         this.customer = customer;
         this.products = products;
         this.discounts = discounts;
@@ -103,5 +103,18 @@ public class NewOrder {
 
     public void setTotalWithDiscount(BigDecimal totalWithDiscount) {
         this.totalWithDiscount = totalWithDiscount;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", customer=" + customer +
+                ", total=" + total +
+                ", discountAmount=" + discountAmount +
+                ", totalWithDiscount=" + totalWithDiscount +
+                ", products=" + products +
+                ", discounts=" + discounts +
+                '}';
     }
 }

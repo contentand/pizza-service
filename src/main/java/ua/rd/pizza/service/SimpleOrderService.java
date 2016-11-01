@@ -1,54 +1,27 @@
 package ua.rd.pizza.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.stereotype.Service;
-import ua.rd.pizza.domain.Customer;
-import ua.rd.pizza.domain.NewOrder;
-import ua.rd.pizza.domain.Order;
-import ua.rd.pizza.domain.product.Pizza;
-import ua.rd.pizza.infrastructure.annotation.Benchmark;
+import org.springframework.transaction.annotation.Transactional;
+import ua.rd.pizza.domain.other.Order;
 import ua.rd.pizza.repository.OrderRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class SimpleOrderService implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final PizzaService pizzaService;
+    private final MemberCardService memberCardService;
 
     @Autowired
-    public SimpleOrderService(OrderRepository orderRepository, PizzaService pizzaService) {
+    public SimpleOrderService(OrderRepository orderRepository, MemberCardService memberCardService) {
         this.orderRepository = orderRepository;
-        this.pizzaService = pizzaService;
+        this.memberCardService = memberCardService;
     }
 
-    @Override @Benchmark(true)
-    public Order placeNewOrder(Customer customer, Integer... pizzasID) {
-        List<Pizza> pizzas = new ArrayList<>();
-
-        for(Integer id : pizzasID){
-            pizzas.add(pizzaService.getPizzaByID(id));
-        }
-        Order newOrder = createNewOrder();
-        newOrder.setCustomer(customer);
-        newOrder.setPizzas(pizzas);
-
-        orderRepository.save(newOrder);
-        return newOrder;
+    @Override @Transactional
+    public void place(Order order) {
+        orderRepository.save(order);
+        memberCardService.addAmount(order.getCustomer(), order.getTotalWithDiscount());
     }
-
-    @Override
-    public void place(NewOrder order) {
-
-    }
-
-    @Lookup("order")
-    Order createNewOrder() {
-        throw new IllegalStateException();
-    }
-
 
 }

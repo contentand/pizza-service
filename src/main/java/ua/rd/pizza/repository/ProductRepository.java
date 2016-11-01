@@ -1,7 +1,8 @@
 package ua.rd.pizza.repository;
 
-/**
- * Created by Daniil_Yurov on 10/31/2016.
- */
+import ua.rd.pizza.domain.product.Product;
+
 public interface ProductRepository {
+    Product getById(Long itemId);
+    Product save(Product product);
 }

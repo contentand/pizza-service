@@ -3,12 +3,14 @@ package ua.rd.pizza.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import ua.rd.pizza.domain.Customer;
+import ua.rd.pizza.domain.other.Customer;
 import ua.rd.pizza.domain.discount.Discount;
-import ua.rd.pizza.domain.NewOrder;
+import ua.rd.pizza.domain.other.Order;
+import ua.rd.pizza.domain.product.Pizza;
 import ua.rd.pizza.domain.product.Product;
 import ua.rd.pizza.exception.NegativeQuantityException;
 import ua.rd.pizza.exception.NoQuantityException;
+import ua.rd.pizza.exception.PizzaLimitExceededException;
 import ua.rd.pizza.exception.ZeroQuantityException;
 
 import java.math.BigDecimal;
@@ -21,6 +23,8 @@ import java.util.Set;
 @Scope("prototype") // TODO: change scope to session once Spring MVC is configured
 @SuppressWarnings("WeakerAccess")
 public class SimpleCart implements Cart {
+
+    private static final int PIZZA_LIMIT = 10;
 
     private Customer customer;
     private OrderService orderService;
@@ -48,10 +52,27 @@ public class SimpleCart implements Cart {
         if (quantity < 0) throw new NegativeQuantityException();
     }
 
+    private void validatePizzaLimit(Product product, Integer quantity) {
+        if (product instanceof Pizza) {
+            if ((quantity + countPizzas()) > PIZZA_LIMIT) {
+                throw new PizzaLimitExceededException();
+            }
+        }
+    }
+
+    private int countPizzas() {
+        return products.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey() instanceof Pizza)
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+    }
+
     @Override
     public void addItem(Long itemId, Integer quantity) {
         validateQuantity(quantity);
         Product product = productService.getById(itemId);
+        validatePizzaLimit(product, quantity);
         products.merge(product, quantity, Integer::sum);
     }
 
@@ -76,10 +97,10 @@ public class SimpleCart implements Cart {
     }
 
     @Override
-    public NewOrder getOrder() {
+    public Order getOrder() {
         Map<Discount, BigDecimal> discounts;
         discounts = discountService.compute(customer, products, vouchers);
-        return new NewOrder(customer, products, discounts);
+        return new Order(customer, products, discounts);
     }
 
     @Override
@@ -89,8 +110,8 @@ public class SimpleCart implements Cart {
     }
 
     @Override
-    public NewOrder buy() {
-        NewOrder order = getOrder();
+    public Order buy() {
+        Order order = getOrder();
         this.orderService.place(order);
         this.products = new HashMap<>();
         this.vouchers = new HashSet<>();

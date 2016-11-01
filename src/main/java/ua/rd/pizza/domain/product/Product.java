@@ -7,17 +7,17 @@ import java.math.BigDecimal;
 @Table(name = "PRODUCT")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "PRODUCT_TYPE")
+@TableGenerator(
+        name = "PRODUCT_GENERATOR",
+        table = "IDS",
+        pkColumnName = "NAME",
+        pkColumnValue = "PRODUCTS",
+        valueColumnName = "VALUE",
+        initialValue = 1,
+        allocationSize = 1)
 public abstract class Product {
-
-    @TableGenerator(
-            name = "PRODUCT_GENERATOR",
-            table = "IDS",
-            pkColumnName = "NAME",
-            pkColumnValue = "PRODUCTS",
-            valueColumnName = "VALUE",
-            allocationSize = 1)
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PRODUCT_GENERATOR")
+    @GeneratedValue(generator = "PRODUCT_GENERATOR")
     private Long id;
     private BigDecimal unitPrice;
 

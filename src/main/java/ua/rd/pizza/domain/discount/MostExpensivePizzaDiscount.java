@@ -1,34 +1,43 @@
 package ua.rd.pizza.domain.discount;
 
-import ua.rd.pizza.domain.Customer;
+import ua.rd.pizza.domain.other.Customer;
 import ua.rd.pizza.domain.product.Pizza;
 import ua.rd.pizza.domain.product.Product;
 
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+@Entity
 public class MostExpensivePizzaDiscount extends Discount {
 
-    private static final BigDecimal NO_DISCOUNT = new BigDecimal("0");
-    private static final BigDecimal DISCOUNT_RATE = new BigDecimal("0.30");
+    @Transient private static final BigDecimal NO_DISCOUNT = new BigDecimal("0");
+    @Transient private static final BigDecimal DISCOUNT_RATE = new BigDecimal("0.30");
+    @Transient private static final int PIZZA_NUMBER_THRESHOLD = 4;
+
+    public MostExpensivePizzaDiscount() {
+        super();
+    }
 
     @Override
     public BigDecimal apply(Customer customer,
                             Map<Product, Integer> products,
                             Map<Discount, BigDecimal> assignedDiscounts) {
 
-        Set<Pizza> pizzas = products
+        int numberOfPizzas = products.entrySet().stream()
+                .filter(entry -> entry.getKey() instanceof Pizza)
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+
+        if (numberOfPizzas <= PIZZA_NUMBER_THRESHOLD) return NO_DISCOUNT;
+
+        BigDecimal mostExpensivePizzaPrice = products
                 .keySet()
                 .stream()
                 .filter(product -> product instanceof Pizza)
                 .map(product -> (Pizza) product)
-                .collect(Collectors.toSet());
-
-        if (pizzas.size() <= 4) return NO_DISCOUNT;
-
-        BigDecimal mostExpensivePizzaPrice = pizzas.stream()
+                .distinct()
                 .map(Product::getUnitPrice)
                 .reduce((price1, price2) -> price1.compareTo(price2) > 0 ? price1 : price2)
                 .orElse(new BigDecimal("0"));

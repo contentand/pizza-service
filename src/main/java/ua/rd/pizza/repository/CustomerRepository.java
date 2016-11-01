@@ -1,7 +1,8 @@
 package ua.rd.pizza.repository;
 
-import ua.rd.pizza.domain.Customer;
+import ua.rd.pizza.domain.other.Customer;
 
 public interface CustomerRepository {
-    Customer get(Integer id);
+    Customer getById(Integer id);
+    Customer save(Customer customer);
 }

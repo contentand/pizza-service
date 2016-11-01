@@ -1,14 +1,24 @@
-package ua.rd.pizza.domain;
+package ua.rd.pizza.domain.other;
 
 import javax.persistence.*;
 
-@Entity @Table(name = "customers")
+@Entity
+@Table(name = "customers")
+@TableGenerator(
+        name = "CUSTOMER_GENERATOR",
+        table = "IDS",
+        pkColumnName = "NAME",
+        pkColumnValue = "CUSTOMERS",
+        valueColumnName = "VALUE",
+        initialValue = 1,
+        allocationSize = 1)
 public class Customer {
-    @TableGenerator(name = "ids", table = "ids", pkColumnValue = "customers")
-    @Id @GeneratedValue(generator = "ids")
+    @Id @GeneratedValue(generator = "CUSTOMER_GENERATOR")
     private Integer id;
     private String name;
     private String address;
+
+    public Customer() {}
 
     public Customer(Customer customer) {
         this.id = customer.id;

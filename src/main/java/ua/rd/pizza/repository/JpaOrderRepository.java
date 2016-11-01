@@ -2,8 +2,7 @@ package ua.rd.pizza.repository;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import ua.rd.pizza.domain.Order;
+import ua.rd.pizza.domain.other.Order;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,7 +12,7 @@ public class JpaOrderRepository implements OrderRepository {
 
     private @PersistenceContext EntityManager entityManager;
 
-    @Override @Transactional
+    @Override
     public Order save(Order order) {
         return this.entityManager.merge(order);
     }

@@ -1,13 +1,20 @@
-package ua.rd.pizza.domain;
+package ua.rd.pizza.domain.other;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity @Table(name = "cards")
+@TableGenerator(
+        name = "CARD_GENERATOR",
+        table = "IDS",
+        pkColumnName = "NAME",
+        pkColumnValue = "CARDS",
+        valueColumnName = "VALUE",
+        initialValue = 1,
+        allocationSize = 1)
 public class MemberCard {
-    @TableGenerator(name = "ids", table = "ids", pkColumnValue = "cards")
-    @Id @GeneratedValue(generator = "ids")
+    @Id @GeneratedValue(generator = "CARD_GENERATOR")
     private Integer id;
     private LocalDate date;
     private BigDecimal amount;

@@ -2,7 +2,7 @@ package ua.rd.pizza.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.rd.pizza.domain.Customer;
+import ua.rd.pizza.domain.other.Customer;
 import ua.rd.pizza.domain.discount.Discount;
 import ua.rd.pizza.domain.product.Product;
 import ua.rd.pizza.exception.NoSuchVoucherException;
@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SimpleDiscountService implements DiscountService {
@@ -50,6 +51,17 @@ public class SimpleDiscountService implements DiscountService {
             assignedDiscounts.put(discount, discount.apply(customer, products, discounts));
         }
 
+        return nonZeroDiscounts(assignedDiscounts);
+    }
+
+    private Map<Discount,BigDecimal> nonZeroDiscounts(Map<Discount, BigDecimal> assignedDiscounts) {
+        Set<Discount> zeroDiscounts = assignedDiscounts.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(new BigDecimal(0)))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
+        //noinspection Convert2streamapi
+        for (Discount discount : zeroDiscounts) assignedDiscounts.remove(discount);
         return assignedDiscounts;
     }
 }
