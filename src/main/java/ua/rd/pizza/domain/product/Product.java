@@ -18,8 +18,8 @@ import java.math.BigDecimal;
 public abstract class Product {
     @Id
     @GeneratedValue(generator = "PRODUCT_GENERATOR")
-    private Long id;
-    private BigDecimal unitPrice;
+    protected Long id;
+    protected BigDecimal unitPrice;
 
     public Long getId() {
         return id;
@@ -36,4 +36,5 @@ public abstract class Product {
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
+
 }

@@ -6,6 +6,7 @@ import ua.rd.pizza.domain.product.Product;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository @Primary
 public class JpaProductRepository implements ProductRepository {
@@ -22,5 +23,10 @@ public class JpaProductRepository implements ProductRepository {
     public Product save(Product product) {
         entityManager.persist(product);
         return product;
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
+        return entityManager.createQuery("SELECT p FROM Product p", Product.class).getResultList();
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.rd.pizza.domain.product.Product;
 import ua.rd.pizza.repository.ProductRepository;
 
+import java.util.List;
+
 @Service
 public class SimpleProductService implements ProductService {
 
@@ -25,5 +27,10 @@ public class SimpleProductService implements ProductService {
     @Override @Transactional
     public Product save(Product product) {
         return productRepository.save(product);
+    }
+
+    @Override @Transactional
+    public List<Product> getAllProducts() {
+        return productRepository.getAllProducts();
     }
 }

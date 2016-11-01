@@ -33,4 +33,14 @@ public class Pizza extends Product implements Serializable {
     public void setType(Type type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Pizza{" +
+                "id=" + id +
+                ",name='" + name + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", type=" + type +
+                '}';
+    }
 }
