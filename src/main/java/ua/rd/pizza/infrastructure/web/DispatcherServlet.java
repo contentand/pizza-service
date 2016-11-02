@@ -55,36 +55,13 @@ public class DispatcherServlet extends HttpServlet {
     {
         // Set response content type
         response.setContentType("text/html");
-
-        ProductService productService = context.getBean(ProductService.class, "simpleProductService");
-
-        Pizza p = new Pizza();
-        p.setName("Margarita");
-        p.setType(Pizza.Type.MEAT);
-        p.setUnitPrice(new BigDecimal("232.12"));
-
-        Product pr = productService.save(p);
-
-        Cart c = context.getBean(Cart.class);
-        c.addItem(pr.getId(), 5);
-        Order o = c.buy();
-
-        // Actual logic goes here.
-        PrintWriter out = response.getWriter();
-        out.println("<h1>" + o + "</h1>");
         process(request, response);
     }
 
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String url=request.getRequestURI();
-        String controllerName=getControllerName(url);
-
-
-        MyController controller= (MyController) context.getBean(controllerName);
-        if(controller!=null){
-            controller.handleRequest(request,response);
-        }
+        MyHandlerMapping handlerMapping = context.getBean(MyHandlerMapping.class, "HandlerMappingStrategy");
+        handlerMapping.handleRequest(request, response);
     }
 
     private String getControllerName(String url) {
