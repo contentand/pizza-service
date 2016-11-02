@@ -10,7 +10,7 @@
         <load-on-startup>1</load-on-startup>
         <init-param>
             <param-name>servletConfigLocation</param-name>
-            <param-value>ua.rd.pizza.infrastructure.WebJavaConfig</param-value>
+            <param-value>ua.rd.pizza.config.WebJavaConfig</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
@@ -20,6 +20,6 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>ua.rd.pizza.infrastructure.AppJavaConfig</param-value>
+        <param-value>ua.rd.pizza.config.AppJavaConfig</param-value>
     </context-param>
 </web-app>

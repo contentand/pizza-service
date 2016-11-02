@@ -5,7 +5,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import ua.rd.pizza.domain.other.Order;
 import ua.rd.pizza.domain.product.Pizza;
 import ua.rd.pizza.domain.product.Product;
-import ua.rd.pizza.infrastructure.AppJavaConfig;
+import ua.rd.pizza.config.AppJavaConfig;
 import ua.rd.pizza.service.Cart;
 import ua.rd.pizza.service.ProductService;
 

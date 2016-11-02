@@ -1,4 +1,4 @@
-package ua.rd.pizza.infrastructure;
+package ua.rd.pizza.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
