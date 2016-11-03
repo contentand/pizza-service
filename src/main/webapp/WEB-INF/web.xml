@@ -5,21 +5,35 @@
          version="3.1">
 
     <servlet>
-        <servlet-name>DispatcherServlet</servlet-name>
-        <servlet-class>ua.rd.pizza.infrastructure.web.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <servlet-name>SpringDispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
         <init-param>
-            <param-name>servletConfigLocation</param-name>
+            <param-name>contextClass</param-name>
+            <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
             <param-value>ua.rd.pizza.config.WebJavaConfig</param-value>
         </init-param>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>DispatcherServlet</servlet-name>
-        <url-pattern>/app/*</url-pattern>
-    </servlet-mapping>
 
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>ua.rd.pizza.config.AppJavaConfig</param-value>
     </context-param>
+
+    <servlet-mapping>
+        <servlet-name>SpringDispatcherServlet</servlet-name>
+        <url-pattern>/app-spring/*</url-pattern>
+    </servlet-mapping>
+
+
 </web-app>

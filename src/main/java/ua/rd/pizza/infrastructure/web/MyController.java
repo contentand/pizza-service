@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public interface MyController {
-    default void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    default void handleMyRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     }
 }

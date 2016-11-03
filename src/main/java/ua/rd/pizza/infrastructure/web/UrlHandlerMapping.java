@@ -1,10 +1,8 @@
 package ua.rd.pizza.infrastructure.web;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +18,7 @@ public class UrlHandlerMapping implements MyHandlerMapping, ApplicationContextAw
         String controllerName = getControllerName(url);
         MyController controller= (MyController) webContext.getBean(controllerName);
         if(controller!=null){
-            controller.handleRequest(req,resp);
+            controller.handleMyRequest(req,resp);
         }
     }
 
